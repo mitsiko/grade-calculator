@@ -6,13 +6,17 @@
     <title>Grade Calculator</title>
     <!-- Link to the external CSS file for styling -->
     <link rel="stylesheet" href="static/styles.css">
+    <!-- PyScript CSS -->
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+    <!-- PyScript JavaScript -->
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
 </head>
 <body>
     <div class="container">
         <h1>Grade Calculator</h1>
         
         <!-- Form for user input -->
-        <form method="POST">
+        <form id="grade-form">
             <label for="prelim">Enter Prelim Grade (0-100):</label>
             <!-- Number input field for prelim grade -->
             <input type="number" id="prelim" name="prelim" min="0" max="100" step="0.01" required>
@@ -20,40 +24,108 @@
         </form>
         
         <!-- Display area for error messages -->
-        {% if error %}
-        <div class="error">
-            <p>{{ error }}</p>
-        </div>
-        {% endif %}
+        <div id="error" class="error" style="display: none;"></div>
 
         <!-- Display area for calculation results -->
-        {% if result %}
-        <div class="result">
-            <h2>Results</h2>
-            <!-- Display preliminary grade -->
-            <p>Prelim Grade: {{ result.prelim }}</p>
-            <!-- Display required grades for passing -->
-            <p>Required Midterm Grade: {{ result.required_midterm }}</p>
-            <p>Required Final Grade: {{ result.required_final }}</p>
-            <!-- Display passing status -->
-            <p>
-                {% if result.can_pass %}
-                You have a chance to pass!
-                {% else %}
-                It is difficult to pass.
-                {% endif %}
-            </p>
-            <h3>Dean's Lister Status</h3>
-            <!-- Display Dean's List status and requirements if applicable -->
-            {% if result.deans_list_possible %}
-            <p>It's possible for you to be a Dean's Lister!</p>
-            <p>Required Midterm Grade: {{ result.deans_midterm }}</p>
-            <p>Required Final Grade: {{ result.deans_final }}</p>
-            {% else %}
-            <p>Unfortunately, it's not possible for you to be a Dean's Lister.</p>
-            {% endif %}
-        </div>
-        {% endif %}
+        <div id="result" class="result" style="display: none;"></div>
     </div>
+
+    <py-config>
+        packages = ["jinja2"]
+    </py-config>
+
+    <py-script>
+from jinja2 import Template
+
+def calculate_grades(prelim):
+    # Define grade weights and thresholds
+    prelim_weight = 0.2
+    midterm_weight = 0.3
+    final_weight = 0.5
+    passing_grade = 75
+    deans_list_grade = 90
+
+    # Calculate required midterm grade for passing
+    required_midterm = (passing_grade - (prelim * prelim_weight)) / (midterm_weight + final_weight)
+    
+    # Calculate required final grade for passing
+    required_final = (passing_grade - (prelim * prelim_weight) - (required_midterm * midterm_weight)) / final_weight
+
+    # Check if it's possible to pass the course
+    can_pass = 0 <= required_midterm <= 100 and 0 <= required_final <= 100
+
+    # Calculate grades needed for Dean's list
+    deans_midterm = (deans_list_grade - (prelim * prelim_weight)) / (midterm_weight + final_weight)
+    deans_final = (deans_list_grade - (prelim * prelim_weight) - (deans_midterm * midterm_weight)) / final_weight
+
+    # Check if achieving Dean's list is possible
+    deans_list_possible = deans_midterm <= 100 and deans_final <= 100
+
+    # Return a dictionary with all calculated values
+    return {
+        "prelim": prelim,
+        "required_midterm": round(required_midterm, 2),
+        "required_final": round(required_final, 2),
+        "can_pass": can_pass,
+        "deans_midterm": round(deans_midterm, 2),
+        "deans_final": round(deans_final, 2),
+        "deans_list_possible": deans_list_possible
+    }
+
+def handle_submit(event):
+    event.preventDefault()
+    prelim_input = Element('prelim')
+    error_div = Element('error')
+    result_div = Element('result')
+    
+    try:
+        prelim = float(prelim_input.value)
+        if 0 <= prelim <= 100:
+            result = calculate_grades(prelim)
+            display_result(result)
+            error_div.style.display = 'none'
+        else:
+            display_error("Prelim grade must be between 0 and 100")
+    except ValueError:
+        display_error("Invalid input. Please enter a number.")
+
+def display_error(message):
+    error_div = Element('error')
+    error_div.innerHTML = f"<p>{message}</p>"
+    error_div.style.display = 'block'
+    Element('result').style.display = 'none'
+
+def display_result(result):
+    result_template = Template("""
+        <h2>Results</h2>
+        <p>Prelim Grade: {{ result.prelim }}</p>
+        <p>Required Midterm Grade: {{ result.required_midterm }}</p>
+        <p>Required Final Grade: {{ result.required_final }}</p>
+        <p>
+            {% if result.can_pass %}
+            You have a chance to pass!
+            {% else %}
+            It is difficult to pass.
+            {% endif %}
+        </p>
+        <h3>Dean's Lister Status</h3>
+        {% if result.deans_list_possible %}
+        <p>It's possible for you to be a Dean's Lister!</p>
+        <p>Required Midterm Grade: {{ result.deans_midterm }}</p>
+        <p>Required Final Grade: {{ result.deans_final }}</p>
+        {% else %}
+        <p>Unfortunately, it's not possible for you to be a Dean's Lister.</p>
+        {% endif %}
+    """)
+    
+    result_html = result_template.render(result=result)
+    result_div = Element('result')
+    result_div.innerHTML = result_html
+    result_div.style.display = 'block'
+
+# Add event listener to the form
+form = Element('grade-form')
+form.element.onsubmit = handle_submit
+    </py-script>
 </body>
 </html>
