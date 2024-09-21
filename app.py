@@ -1,7 +1,9 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_from_directory
+import os
 
 # Initialize the Flask application
-app = Flask(__name__)
+# Set the template folder to the current directory
+app = Flask(__name__, template_folder='.')
 
 def calculate_grades(prelim):
     """
@@ -82,7 +84,16 @@ def index():
             error = "Invalid input. Please enter a number."
 
     # Render the template with the form, results (if any), and errors (if any)
-    return send_from_directory('', 'index.html')
+    return render_template('index.html', result=result, error=error)
+
+@app.route('/styles.css')
+def styles():
+    """
+    Serve the CSS file.
+    
+    This function allows Flask to serve the CSS file from the root directory.
+    """
+    return send_from_directory('.', 'styles.css')
 
 # Run the Flask application if this script is executed directly
 if __name__ == '__main__':
