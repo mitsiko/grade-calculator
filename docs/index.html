@@ -30,13 +30,7 @@
         <div id="result" class="result" style="display: none;"></div>
     </div>
 
-    <py-config>
-        packages = ["jinja2"]
-    </py-config>
-
     <py-script>
-from jinja2 import Template
-
 def calculate_grades(prelim):
     # Define grade weights and thresholds
     prelim_weight = 0.2
@@ -96,29 +90,20 @@ def display_error(message):
     Element('result').style.display = 'none'
 
 def display_result(result):
-    result_template = Template("""
+    result_html = f"""
         <h2>Results</h2>
-        <p>Prelim Grade: {{ result.prelim }}</p>
-        <p>Required Midterm Grade: {{ result.required_midterm }}</p>
-        <p>Required Final Grade: {{ result.required_final }}</p>
+        <p>Prelim Grade: {result['prelim']}</p>
+        <p>Required Midterm Grade: {result['required_midterm']}</p>
+        <p>Required Final Grade: {result['required_final']}</p>
         <p>
-            {% if result.can_pass %}
-            You have a chance to pass!
-            {% else %}
-            It is difficult to pass.
-            {% endif %}
+            {'You have a chance to pass!' if result['can_pass'] else 'It is difficult to pass.'}
         </p>
         <h3>Dean's Lister Status</h3>
-        {% if result.deans_list_possible %}
-        <p>It's possible for you to be a Dean's Lister!</p>
-        <p>Required Midterm Grade: {{ result.deans_midterm }}</p>
-        <p>Required Final Grade: {{ result.deans_final }}</p>
-        {% else %}
-        <p>Unfortunately, it's not possible for you to be a Dean's Lister.</p>
-        {% endif %}
-    """)
+        {'<p>It\'s possible for you to be a Dean\'s Lister!</p>' if result['deans_list_possible'] else '<p>Unfortunately, it\'s not possible for you to be a Dean\'s Lister.</p>'}
+        {'<p>Required Midterm Grade: ' + str(result['deans_midterm']) + '</p>' if result['deans_list_possible'] else ''}
+        {'<p>Required Final Grade: ' + str(result['deans_final']) + '</p>' if result['deans_list_possible'] else ''}
+    """
     
-    result_html = result_template.render(result=result)
     result_div = Element('result')
     result_div.innerHTML = result_html
     result_div.style.display = 'block'
