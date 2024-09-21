@@ -82,7 +82,7 @@ def index():
             error = "Invalid input. Please enter a number."
 
     # Render the template with the form, results (if any), and errors (if any)
-    return render_template('index.html', result=result, error=error)
+    return send_from_directory('', 'index.html')
 
 # Run the Flask application if this script is executed directly
 if __name__ == '__main__':
