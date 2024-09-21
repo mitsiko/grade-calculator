@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request
-from flask import Flask, render_template, request
 
 # Initialize the Flask application
 app = Flask(__name__, static_url_path='/static', static_folder='docs/static', template_folder='docs')
