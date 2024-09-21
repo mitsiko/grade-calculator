@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade Calculator</title>
+    <!-- Link to the external CSS file for styling -->
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Grade Calculator</h1>
+        
+        <!-- Form for user input -->
+        <form method="POST">
+            <label for="prelim">Enter Prelim Grade (0-100):</label>
+            <!-- Number input field for prelim grade -->
+            <input type="number" id="prelim" name="prelim" min="0" max="100" step="0.01" required>
+            <button type="submit">Calculate</button>
+        </form>
+        
+        <!-- Display area for error messages -->
+        {% if error %}
+        <div class="error">
+            <p>{{ error }}</p>
+        </div>
+        {% endif %}
+
+        <!-- Display area for calculation results -->
+        {% if result %}
+        <div class="result">
+            <h2>Results</h2>
+            <!-- Display preliminary grade -->
+            <p>Prelim Grade: {{ result.prelim }}</p>
+            <!-- Display required grades for passing -->
+            <p>Required Midterm Grade: {{ result.required_midterm }}</p>
+            <p>Required Final Grade: {{ result.required_final }}</p>
+            <!-- Display passing status -->
+            <p>
+                {% if result.can_pass %}
+                You have a chance to pass!
+                {% else %}
+                It is difficult to pass.
+                {% endif %}
+            </p>
+            <h3>Dean's Lister Status</h3>
+            <!-- Display Dean's List status and requirements if applicable -->
+            {% if result.deans_list_possible %}
+            <p>It's possible for you to be a Dean's Lister!</p>
+            <p>Required Midterm Grade: {{ result.deans_midterm }}</p>
+            <p>Required Final Grade: {{ result.deans_final }}</p>
+            {% else %}
+            <p>Unfortunately, it's not possible for you to be a Dean's Lister.</p>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
