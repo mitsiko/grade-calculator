@@ -7,21 +7,30 @@
     <link rel="stylesheet" href="static/styles.css">
     <script src="https://pyscript.net/latest/pyscript.js"></script>
     <script>
+        // Function to calculate the required grades based on the prelim grade
         function calculateGrades(prelim) {
-            const prelimWeight = 0.2;
-            const midtermWeight = 0.3;
-            const finalWeight = 0.5;
-            const passingGrade = 75;
-            const deansListGrade = 90;
+            // Weight of each grading component
+            const prelimWeight = 0.2;  // Prelim accounts for 20% of the final grade
+            const midtermWeight = 0.3;  // Midterm accounts for 30%
+            const finalWeight = 0.5;    // Final accounts for 50%
+            const passingGrade = 75;     // Minimum grade needed to pass
+            const deansListGrade = 90;   // Minimum grade for Dean's List
 
+            // Calculate the required midterm grade to pass
             const requiredMidterm = (passingGrade - (prelim * prelimWeight)) / (midtermWeight + finalWeight);
+            // Calculate the required final grade to pass
             const requiredFinal = (passingGrade - (prelim * prelimWeight) - (requiredMidterm * midtermWeight)) / finalWeight;
 
+            // Determine if it's possible to pass based on calculated grades
             const canPass = 0 <= requiredMidterm && requiredMidterm <= 100 && 0 <= requiredFinal && requiredFinal <= 100;
+
+            // Calculate the required grades for Dean's List
             const deansMidterm = (deansListGrade - (prelim * prelimWeight)) / (midtermWeight + finalWeight);
             const deansFinal = (deansListGrade - (prelim * prelimWeight) - (deansMidterm * midtermWeight)) / finalWeight;
+            // Check if Dean's List is achievable
             const deansListPossible = deansMidterm <= 100 && deansFinal <= 100;
 
+            // Return all calculated results in an object
             return {
                 prelim,
                 requiredMidterm: requiredMidterm.toFixed(2),
@@ -33,13 +42,19 @@
             };
         }
 
+        // Function to handle form submission
         function handleSubmit(event) {
+            // Prevent the default form submission behavior
             event.preventDefault();
 
+            // Get the prelim grade input from the user
             const prelimInput = document.getElementById("prelim").value;
-            const prelimGrade = parseFloat(prelimInput);
+            const prelimGrade = parseFloat(prelimInput); // Convert input to a number
+
+            // Calculate grades based on the prelim input
             const results = calculateGrades(prelimGrade);
 
+            // Prepare the result message to display to the user
             let resultMessage = `<h2>Results</h2>
                 <p>Prelim Grade: ${results.prelim}</p>
                 <p>Required Midterm Grade: ${results.requiredMidterm}</p>
@@ -50,8 +65,9 @@
                 <p>Required Midterm Grade: ${results.deansListPossible ? results.deansMidterm : 'N/A'}</p>
                 <p>Required Final Grade: ${results.deansListPossible ? results.deansFinal : 'N/A'}</p>`;
 
+            // Display the result message in the designated area
             document.getElementById("result-message").innerHTML = resultMessage;
-            document.getElementById("error-message").innerHTML = "";
+            document.getElementById("error-message").innerHTML = ""; // Clear any previous error messages
         }
     </script>
 </head>
@@ -59,14 +75,15 @@
     <div class="container">
         <h1>Grade Calculator</h1>
         
+        <!-- Form to input the prelim grade -->
         <form id="grade-form" onsubmit="handleSubmit(event)">
             <label for="prelim">Enter Prelim Grade (0-100):</label>
             <input type="number" id="prelim" name="prelim" min="0" max="100" step="0.01" required>
             <button type="submit">Calculate</button>
         </form>
         
-        <div id="error-message"></div>
-        <div id="result-message"></div>
+        <div id="error-message"></div> <!-- Area for displaying error messages -->
+        <div id="result-message"></div> <!-- Area for displaying calculation results -->
     </div>
 </body>
 </html>
