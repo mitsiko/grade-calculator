@@ -1,7 +1,4 @@
-from flask import Flask, render_template, request
-
-# Initialize the Flask application
-app = Flask(__name__, static_url_path='/static', static_folder='docs/static', template_folder='docs')
+# app.py
 
 def calculate_grades(prelim):
     """
@@ -50,40 +47,3 @@ def calculate_grades(prelim):
         "deans_final": round(deans_final, 2),
         "deans_list_possible": deans_list_possible
     }
-
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    """
-    Handle requests to the main page of the web application.
-    
-    This function processes both GET and POST requests:
-    - GET: Display the initial form
-    - POST: Process the submitted form and display results
-    
-    Returns:
-    str: Rendered HTML template with form and/or results
-    """
-    
-    result = None  # Will store calculation results
-    error = None   # Will store any error messages
-
-    if request.method == 'POST':
-        try:
-            # Attempt to get and validate the prelim grade from the form
-            prelim = float(request.form['prelim'])
-            if 0 <= prelim <= 100:
-                # If valid, calculate and store the results
-                result = calculate_grades(prelim)
-            else:
-                # If out of range, set an error message
-                error = "Prelim grade must be between 0 and 100"
-        except ValueError:
-            # If input can't be converted to float, set an error message
-            error = "Invalid input. Please enter a number."
-
-    # Render the template with the form, results (if any), and errors (if any)
-    return render_template('index.html', result=result, error=error)
-
-# Run the Flask application if this script is executed directly
-if __name__ == '__main__':
-    app.run(debug=True)
