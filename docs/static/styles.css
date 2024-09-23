@@ -15,11 +15,11 @@ body {
     padding: 20px;
     background-color: #fff;
     border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
     width: 650px;
     overflow-y: auto; 
-    min-height: 250px;
-    max-height: 400px;
+    min-height: 15.62rem;
+    max-height: 25rem;
 }
 
 h1, h2, h3, h4, p, label{
