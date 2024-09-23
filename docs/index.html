@@ -1,49 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Meta information for character encoding and viewport settings -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grade Calculator</title>
+    
+    <!-- Link to external stylesheet for styling the webpage -->
     <link rel="stylesheet" href="static/styles.css">
+    
+    <!-- Load the PyScript library for running Python code in the browser -->
     <script src="https://pyscript.net/latest/pyscript.js"></script>
 </head>
 <body>
+    <!-- Background image for aesthetic purposes -->
     <img class="background_img" src="images/gingham5.webp">
 
     <div class="container">
         <h1>Grade Calculator</h1>
 
+        <!-- Form for user input: the prelim grade is required -->
         <form id="grade-form" onsubmit="handleSubmit(event)">
             <label for="prelim">Prelim Grade:</label>
+            <!-- Input field for Prelim Grade. The value must be between 0 and 100 -->
             <input type="number" id="prelim" name="prelim" min="0" max="100" step="0.01" required placeholder="Enter Prelim Grade: (0-100)">
             <button type="submit">Calculate</button>
         </form>
         
+        <!-- Sections to display error or result messages dynamically -->
         <div id="error-message"></div>
         <div id="result-message"></div>
 
+        <!-- PyScript block where the Python logic resides -->
         <py-script>
             from js import document, window
 
+            # Function that calculates the required grades based on the prelim grade
             def perform_calculations(prelim):
-                # Weight of each grading component
-                prelim_weight = 0.2
-                midterm_weight = 0.3
-                final_weight = 0.5
-                passing_grade = 75
-                deans_list_grade = 90
+                # Constants for grade weightage
+                prelim_weight = 0.2  # 20% for Prelim Grade
+                midterm_weight = 0.3  # 30% for Midterm Grade
+                final_weight = 0.5    # 50% for Final Grade
+                
+                passing_grade = 75     # Minimum grade required to pass the subject
+                deans_list_grade = 90  # Minimum grade required for Dean's List
 
-                # Calculate required grades
+                # Calculate required midterm and final grades for passing (75%) and Dean's List (90%)
                 required_midterm = (passing_grade - (prelim * prelim_weight)) / (midterm_weight + final_weight)
                 required_final = (passing_grade - (prelim * prelim_weight) - (required_midterm * midterm_weight)) / final_weight
 
+                # Determine if it’s possible to pass (if grades fall within a valid range)
                 can_pass = 0 <= required_midterm <= 100 and 0 <= required_final <= 100
 
+                # Calculate grades required for Dean's List status
                 deans_midterm = (deans_list_grade - (prelim * prelim_weight)) / (midterm_weight + final_weight)
                 deans_final = (deans_list_grade - (prelim * prelim_weight) - (deans_midterm * midterm_weight)) / final_weight
+
+                # Determine if it's possible to achieve Dean's List
                 deans_list_possible = deans_midterm <= 100 and deans_final <= 100
 
-                # Prepare result message
+                # Generate HTML result message with calculated grades
                 result_message = f"""
                     <h2>Results</h2>
                     <p><strong>Prelim Grade: {prelim}</strong></p>
@@ -58,30 +74,34 @@
                     <p><strong>Required Midterm Grade: {'N/A' if not deans_list_possible else deans_midterm:.2f}</strong></p>
                     <p><strong>Required Final Grade: {'N/A' if not deans_list_possible else deans_final:.2f}</strong></p>
                 """
+                
+                # Return the result as an HTML string
                 return result_message
 
-            # Expose the function to JavaScript
+            # Expose the perform_calculations function to JavaScript for use in the browser
             window.perform_calculations = perform_calculations
         </py-script>
 
         <script>
-            // Function to handle form submission
+            // JavaScript function to handle the form submission
             async function handleSubmit(event) {
-                // Prevent the default form submission behavior
+                // Prevent the default form submission, so we can handle it with JS/Python
                 event.preventDefault();
 
-                // Get the prelim grade input from the user
+                // Get the prelim grade input from the form
                 const prelimInput = document.getElementById("prelim").value;
-                const prelimGrade = parseFloat(prelimInput); // Convert input to a number
+                const prelimGrade = parseFloat(prelimInput); // Convert the input to a float (number)
 
-                // Call the Python function to perform calculations
+                // Call the Python function to perform calculations with the given prelim grade
                 const results = await window.perform_calculations(prelimGrade);
 
-                // Update the result message in the HTML
+                // Display the calculated results in the "result-message" div
                 document.getElementById("result-message").innerHTML = results;
-                document.getElementById("error-message").innerHTML = ""; // Clear any previous error messages
 
-                // Clear the input field after submission
+                // Clear any previous error messages
+                document.getElementById("error-message").innerHTML = "";
+
+                // Clear the input field after the form is submitted
                 document.getElementById("prelim").value = "";
             }
         </script>
