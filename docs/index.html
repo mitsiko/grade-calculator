@@ -6,94 +6,85 @@
     <title>Grade Calculator</title>
     <link rel="stylesheet" href="static/styles.css">
     <script src="https://pyscript.net/latest/pyscript.js"></script>
-    <script>
-        // Function to calculate the required grades based on the prelim grade
-        function calculateGrades(prelim) {
-            // Weight of each grading component
-            const prelimWeight = 0.2;  // Prelim accounts for 20% of the final grade
-            const midtermWeight = 0.3;  // Midterm accounts for 30%
-            const finalWeight = 0.5;    // Final accounts for 50%
-            const passingGrade = 75;     // Minimum grade needed to pass
-            const deansListGrade = 90;   // Minimum grade for Dean's List
-
-            // Calculate the required midterm grade to pass
-            const requiredMidterm = (passingGrade - (prelim * prelimWeight)) / (midtermWeight + finalWeight);
-            // Calculate the required final grade to pass
-            const requiredFinal = (passingGrade - (prelim * prelimWeight) - (requiredMidterm * midtermWeight)) / finalWeight;
-
-            // Determine if it's possible to pass based on calculated grades
-            const canPass = 0 <= requiredMidterm && requiredMidterm <= 100 && 0 <= requiredFinal && requiredFinal <= 100;
-
-            // Calculate the required grades for Dean's List
-            const deansMidterm = (deansListGrade - (prelim * prelimWeight)) / (midtermWeight + finalWeight);
-            const deansFinal = (deansListGrade - (prelim * prelimWeight) - (deansMidterm * midtermWeight)) / finalWeight;
-            // Check if Dean's List is achievable
-            const deansListPossible = deansMidterm <= 100 && deansFinal <= 100;
-
-            // Return all calculated results in an object
-            return {
-                prelim,
-                requiredMidterm: requiredMidterm.toFixed(2),
-                requiredFinal: requiredFinal.toFixed(2),
-                canPass,
-                deansMidterm: deansMidterm.toFixed(2),
-                deansFinal: deansFinal.toFixed(2),
-                deansListPossible
-            };
-        }
-
-        // Function to handle form submission
-        function handleSubmit(event) {
-            // Prevent the default form submission behavior
-            event.preventDefault();
-
-            // Get the prelim grade input from the user
-            const prelimInput = document.getElementById("prelim").value;
-            const prelimGrade = parseFloat(prelimInput); // Convert input to a number
-
-            // Calculate grades based on the prelim input
-            const results = calculateGrades(prelimGrade);
-
-            // Prepare the result message to display to the user
-            let resultMessage = `<h2>Results</h2>
-                <p><strong>Prelim Grade: ${results.prelim}</strong></p>
-                <p>__________________________________________________________</p>
-                <h3>${results.canPass ? 'You have a chance to pass!' : 'It is difficult to pass.'}</h3>
-                <h4>To pass with a minimum grade of 75, aim for the required grades below:</h4>
-                <p><strong>Required Midterm Grade: ${results.requiredMidterm}</strong></p>
-                <p><strong>Required Final Grade: ${results.requiredFinal}</strong></p>
-                <p>__________________________________________________________</p>
-                <h3>Dean's Lister Status</h3>
-                <h4>${results.deansListPossible ? "To qualify for the Dean's List (90 subject grade), achieve the following this semester:" : "Unfortunately, it's not possible for you to be a Dean's Lister."}</h4>
-                <p><strong>Required Midterm Grade: ${results.deansListPossible ? results.deansMidterm : 'N/A'}</strong></p>
-                <p><strong>Required Final Grade: ${results.deansListPossible ? results.deansFinal : 'N/A'}</strong></p>`;
-
-            // Display the result message in the designated area
-            document.getElementById("result-message").innerHTML = resultMessage;
-            document.getElementById("error-message").innerHTML = ""; // Clear any previous error messages
-
-             // Clear the input field after submission
-             document.getElementById("prelim").value = ""; // Reset the input field
-
-        }
-    </script>
 </head>
 <body>
-    <!-- Background Image -->
     <img class="background_img" src="images/gingham5.webp">
 
     <div class="container">
         <h1>Grade Calculator</h1>
 
-        <!-- Form to input the prelim grade -->
         <form id="grade-form" onsubmit="handleSubmit(event)">
             <label for="prelim">Prelim Grade:</label>
             <input type="number" id="prelim" name="prelim" min="0" max="100" step="0.01" required placeholder="Enter Prelim Grade: (0-100)">
             <button type="submit">Calculate</button>
         </form>
         
-        <div id="error-message"></div> <!-- Area for displaying error messages -->
-        <div id="result-message"></div> <!-- Area for displaying calculation results -->
+        <div id="error-message"></div>
+        <div id="result-message"></div>
+
+        <py-script>
+            from js import document, window
+
+            def perform_calculations(prelim):
+                # Weight of each grading component
+                prelim_weight = 0.2
+                midterm_weight = 0.3
+                final_weight = 0.5
+                passing_grade = 75
+                deans_list_grade = 90
+
+                # Calculate required grades
+                required_midterm = (passing_grade - (prelim * prelim_weight)) / (midterm_weight + final_weight)
+                required_final = (passing_grade - (prelim * prelim_weight) - (required_midterm * midterm_weight)) / final_weight
+
+                can_pass = 0 <= required_midterm <= 100 and 0 <= required_final <= 100
+
+                deans_midterm = (deans_list_grade - (prelim * prelim_weight)) / (midterm_weight + final_weight)
+                deans_final = (deans_list_grade - (prelim * prelim_weight) - (deans_midterm * midterm_weight)) / final_weight
+                deans_list_possible = deans_midterm <= 100 and deans_final <= 100
+
+                # Prepare result message
+                result_message = f"""
+                    <h2>Results</h2>
+                    <p><strong>Prelim Grade: {prelim}</strong></p>
+                    <p>__________________________________________________________</p>
+                    <h3>{"You have a chance to pass!" if can_pass else "It is difficult to pass."}</h3>
+                    <h4>To pass with a minimum grade of 75, aim for the required grades below:</h4>
+                    <p><strong>Required Midterm Grade: {required_midterm:.2f}</strong></p>
+                    <p><strong>Required Final Grade: {required_final:.2f}</strong></p>
+                    <p>__________________________________________________________</p>
+                    <h3>Dean's Lister Status</h3>
+                    <h4>{"To qualify for the Dean's List (90 subject grade), achieve the following this semester:" if deans_list_possible else "Unfortunately, it's not possible for you to be a Dean's Lister."}</h4>
+                    <p><strong>Required Midterm Grade: {'N/A' if not deans_list_possible else deans_midterm:.2f}</strong></p>
+                    <p><strong>Required Final Grade: {'N/A' if not deans_list_possible else deans_final:.2f}</strong></p>
+                """
+                return result_message
+
+            # Expose the function to JavaScript
+            window.perform_calculations = perform_calculations
+        </py-script>
+
+        <script>
+            // Function to handle form submission
+            async function handleSubmit(event) {
+                // Prevent the default form submission behavior
+                event.preventDefault();
+
+                // Get the prelim grade input from the user
+                const prelimInput = document.getElementById("prelim").value;
+                const prelimGrade = parseFloat(prelimInput); // Convert input to a number
+
+                // Call the Python function to perform calculations
+                const results = await window.perform_calculations(prelimGrade);
+
+                // Update the result message in the HTML
+                document.getElementById("result-message").innerHTML = results;
+                document.getElementById("error-message").innerHTML = ""; // Clear any previous error messages
+
+                // Clear the input field after submission
+                document.getElementById("prelim").value = "";
+            }
+        </script>
     </div>
 </body>
 </html>
