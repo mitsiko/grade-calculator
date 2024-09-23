@@ -49,12 +49,12 @@
                     <p><strong>Prelim Grade: {prelim}</strong></p>
                     <p>__________________________________________________________</p>
                     <h3>{"You have a chance to pass!" if can_pass else "It is difficult to pass."}</h3>
-                    <h4>To pass with a minimum grade of 75, aim for the required grades below:</h4>
+                    <h4>To pass with a minimum grade of 75%, aim for the required grades below:</h4>
                     <p><strong>Required Midterm Grade: {required_midterm:.2f}</strong></p>
                     <p><strong>Required Final Grade: {required_final:.2f}</strong></p>
                     <p>__________________________________________________________</p>
                     <h3>Dean's Lister Status</h3>
-                    <h4>{"To qualify for the Dean's List (90 subject grade), achieve the following this semester:" if deans_list_possible else "Unfortunately, it's not possible for you to be a Dean's Lister."}</h4>
+                    <h4>{"To qualify for the Dean's List (90% subject grade), achieve the following this semester:" if deans_list_possible else "Unfortunately, it's not possible for you to be a Dean's Lister."}</h4>
                     <p><strong>Required Midterm Grade: {'N/A' if not deans_list_possible else deans_midterm:.2f}</strong></p>
                     <p><strong>Required Final Grade: {'N/A' if not deans_list_possible else deans_final:.2f}</strong></p>
                 """
