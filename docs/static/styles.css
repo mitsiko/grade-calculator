@@ -4,28 +4,43 @@ body {
     margin: 0;
     padding: 0;
     background-color: #e9f5db;
+    overflow: hidden;
 }
 
 .container {
-    width: 80%;
-    max-width: 600px;
+    max-width: 80%;
     margin: 2rem auto;
+    margin-top: 2.8rem;
+    margin-bottom: 2.8rem;
     padding: 20px;
     background-color: #fff;
     border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    width: 650px;
+    overflow-y: auto; 
+    min-height: 250px;
+    max-height: 400px;
 }
 
-h1, h2, h3 {
-    color: #333;
+h1, h2, h3, h4, p, label{
+    color: #333; 
 }
 
+h2{
+   padding: 0px;
+   margin-bottom: 0px;
+}
+h4{
+    font-style: italic;
+    font-weight: normal;
+}
 h1 {
     text-align: center;
 }
 
 form {
     margin-bottom: 20px;
+
 }
 
 label {
@@ -39,8 +54,6 @@ input[type="number"] {
     margin-bottom: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    
-    
 }
 
 /* Remove spinner for Chrome, Safari, Edge, Opera */
@@ -75,4 +88,33 @@ button:hover {
 .error {
     background-color: #ffdddd;
     color: #f44336;
+}
+
+#result-message{
+    padding-left: 2rem;
+    padding-top:0px;
+}
+
+.background_img{
+    position: absolute;
+    top:0px;
+    left:0px;
+    width:100%;
+    height: auto;
+    z-index: -1000;
+}
+
+#grade-form{
+    margin-bottom: 2.5rem;
+}
+
+label {
+    font-weight: bold;
+}
+
+.cat_peaking1{
+    position:fixed;
+    bottom: -50px;
+    left: 800px;
+    z-index: 100;
 }

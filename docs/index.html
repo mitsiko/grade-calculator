@@ -56,29 +56,39 @@
 
             // Prepare the result message to display to the user
             let resultMessage = `<h2>Results</h2>
-                <p>Prelim Grade: ${results.prelim}</p>
-                <p>Required Midterm Grade: ${results.requiredMidterm}</p>
-                <p>Required Final Grade: ${results.requiredFinal}</p>
-                <p>${results.canPass ? 'You have a chance to pass!' : 'It is difficult to pass.'}</p>
+                <p><strong>Prelim Grade: ${results.prelim}</strong></p>
+                <p>__________________________________________________________</p>
+                <h3>${results.canPass ? 'You have a chance to pass!' : 'It is difficult to pass.'}</h3>
+                <h4>To pass with a minimum grade of 75, aim for the required grades below:</h4>
+                <p><strong>Required Midterm Grade: ${results.requiredMidterm}</strong></p>
+                <p><strong>Required Final Grade: ${results.requiredFinal}</strong></p>
+                <p>__________________________________________________________</p>
                 <h3>Dean's Lister Status</h3>
-                <p>${results.deansListPossible ? "It's possible for you to be a Dean's Lister!" : "Unfortunately, it's not possible for you to be a Dean's Lister."}</p>
-                <p>Required Midterm Grade: ${results.deansListPossible ? results.deansMidterm : 'N/A'}</p>
-                <p>Required Final Grade: ${results.deansListPossible ? results.deansFinal : 'N/A'}</p>`;
+                <h4>${results.deansListPossible ? "To qualify for the Dean's List (90 subject grade), achieve the following this semester:" : "Unfortunately, it's not possible for you to be a Dean's Lister."}</h4>
+                <p><strong>Required Midterm Grade: ${results.deansListPossible ? results.deansMidterm : 'N/A'}</strong></p>
+                <p><strong>Required Final Grade: ${results.deansListPossible ? results.deansFinal : 'N/A'}</strong></p>`;
 
             // Display the result message in the designated area
             document.getElementById("result-message").innerHTML = resultMessage;
             document.getElementById("error-message").innerHTML = ""; // Clear any previous error messages
+
+             // Clear the input field after submission
+             document.getElementById("prelim").value = ""; // Reset the input field
+
         }
     </script>
 </head>
 <body>
     <div class="container">
         <h1>Grade Calculator</h1>
-        
+
+        <!-- Imagse -->
+        <img class="background_img" src="images/gingham2.webp">
+
         <!-- Form to input the prelim grade -->
         <form id="grade-form" onsubmit="handleSubmit(event)">
-            <label for="prelim">Enter Prelim Grade (0-100):</label>
-            <input type="number" id="prelim" name="prelim" min="0" max="100" step="0.01" required>
+            <label for="prelim">Prelim Grade:</label>
+            <input type="number" id="prelim" name="prelim" min="0" max="100" step="0.01" required placeholder="Enter Prelim Grade: (0-100)">
             <button type="submit">Calculate</button>
         </form>
         
