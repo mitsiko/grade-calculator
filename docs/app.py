@@ -1,5 +1,3 @@
-# app.py
-
 def calculate_grades(prelim):
     """
     Calculate required grades based on the given prelim score.
@@ -26,24 +24,3 @@ def calculate_grades(prelim):
     
     # Calculate required final grade for passing
     required_final = (passing_grade - (prelim * prelim_weight) - (required_midterm * midterm_weight)) / final_weight
-
-    # Check if it's possible to pass the course
-    can_pass = 0 <= required_midterm <= 100 and 0 <= required_final <= 100
-
-    # Calculate grades needed for Dean's list
-    deans_midterm = (deans_list_grade - (prelim * prelim_weight)) / (midterm_weight + final_weight)
-    deans_final = (deans_list_grade - (prelim * prelim_weight) - (deans_midterm * midterm_weight)) / final_weight
-
-    # Check if achieving Dean's list is possible
-    deans_list_possible = deans_midterm <= 100 and deans_final <= 100
-
-    # Return a dictionary with all calculated values
-    return {
-        "prelim": prelim,
-        "required_midterm": round(required_midterm, 2),
-        "required_final": round(required_final, 2),
-        "can_pass": can_pass,
-        "deans_midterm": round(deans_midterm, 2),
-        "deans_final": round(deans_final, 2),
-        "deans_list_possible": deans_list_possible
-    }
