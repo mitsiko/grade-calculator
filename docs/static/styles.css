@@ -3,15 +3,24 @@ body {
     line-height: 1.6;
     margin: 0;
     padding: 0;
-    background-color: #e9f5db;
     overflow: hidden;
+}
+
+.logo_img{
+    display: block;  /* Center the logo horizontally */
+    margin: 0rem auto; /* Adjust space around the logo */
+    margin-bottom: 0px;
+    max-width: 80%; /* Set a maximum width for the logo */
+    width: 30rem ;
+    height: auto; /* Maintain aspect ratio */
+    top:3rem;
 }
 
 .container {
     max-width: 80%;
     margin: 2rem auto;
-    margin-top: 2.8rem;
-    margin-bottom: 2.8rem;
+    margin-top:0px;
+    margin-bottom: 1rem;
     padding: 20px;
     background-color: #fff;
     border-radius: 5px;
@@ -19,18 +28,14 @@ body {
     width: 650px;
     overflow-y: auto; 
     min-height: 15.62rem;
-    max-height: 25rem;
+    max-height: 50vh;
 }
 
-h1, h2, h3, h4, p, label{
-    color: #333; 
+h2, h3, h4, p, label{
     margin: 0px;
+    color: #854e1a; 
 }
 
-h2{
-   padding: 0px;
-   margin-bottom: 0px;
-}
 h4{
     font-style: italic;
     font-weight: normal;
@@ -53,7 +58,7 @@ input[type="number"] {
     width: 97%;;
     padding: 8px;
     margin-bottom: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #c5b79e;
     border-radius: 4px;
 }
 
@@ -68,7 +73,7 @@ button {
     display: block;
     width: 100%;
     padding: 10px;
-    background-color: #52b788;
+    background-color: #bf8d2f;
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -76,7 +81,7 @@ button {
 }
 
 button:hover {
-    background-color: #40916c;
+    background-color: #9d7427;
 }
 
 .result, .error {
@@ -92,7 +97,8 @@ button:hover {
 }
 
 #result-message{
-    padding-left: 2rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
     padding-top:0px;
 }
 
