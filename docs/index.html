@@ -18,12 +18,14 @@
 
     <div class="container">
         <h1>Grade Calculator</h1>
-
+        <br>
+        <p class="intro">Welcome to the Grade Calculator! Input your Prelim Grade, and this tool will calculate the Midterm and Final Grades you need to pass your course (75%) or qualify for the Dean’s List (90%). Plan your efforts and stay on track—start calculating now!</p>
+        <br>
         <!-- Form for user input: the prelim grade is required -->
         <form id="grade-form" onsubmit="handleSubmit(event)">
             <label for="prelim">Prelim Grade:</label>
             <!-- Input field for Prelim Grade. The value must be between 0 and 100 -->
-            <input type="number" id="prelim" name="prelim" min="0" max="100" step="0.01" required placeholder="Enter Prelim Grade: (0-100)">
+            <input type="number" id="prelim" name="prelim" min="0" max="100" step="0.01" required placeholder="Enter Prelim Grade: (0-100)" oninvalid="this.setCustomValidity('Please enter a valid number between 0 and 100, with up to 2 decimal places only.')" oninput="this.setCustomValidity('')">
             <button type="submit">Calculate</button>
         </form>
         
@@ -34,9 +36,13 @@
         <!-- PyScript block where the Python logic resides -->
         <py-script>
             from js import document, window
-
+        
             # Function that calculates the required grades based on the prelim grade
             def perform_calculations(prelim):
+                # Ensure prelim is treated as a float
+                prelim = float(prelim)
+                print(f"Prelim Grade: {prelim}")  
+                
                 # Constants for grade weightage
                 prelim_weight = 0.2  # 20% for Prelim Grade
                 midterm_weight = 0.3  # 30% for Midterm Grade
@@ -45,43 +51,59 @@
                 passing_grade = 75     # Minimum grade required to pass the subject
                 deans_list_grade = 90  # Minimum grade required for Dean's List
 
-                # Calculate required midterm and final grades for passing (75%) and Dean's List (90%)
+                # Calculate required midterm and final grades for passing (75%)
                 required_midterm = (passing_grade - (prelim * prelim_weight)) / (midterm_weight + final_weight)
                 required_final = (passing_grade - (prelim * prelim_weight) - (required_midterm * midterm_weight)) / final_weight
-
-                # Determine if it’s possible to pass (if grades fall within a valid range)
-                can_pass = 0 <= required_midterm <= 100 and 0 <= required_final <= 100
-
+                                
                 # Calculate grades required for Dean's List status
                 deans_midterm = (deans_list_grade - (prelim * prelim_weight)) / (midterm_weight + final_weight)
                 deans_final = (deans_list_grade - (prelim * prelim_weight) - (deans_midterm * midterm_weight)) / final_weight
-
-                # Determine if it's possible to achieve Dean's List
-                deans_list_possible = deans_midterm <= 100 and deans_final <= 100
-
+                
                 # Generate HTML result message with calculated grades
-                result_message = f"""
-                    <h2>Results</h2>
-                    <p><strong>Prelim Grade: {prelim}</strong></p>
-                    <p>__________________________________________________________</p>
-                    <h3>{"You have a chance to pass!" if can_pass else "It is difficult to pass."}</h3>
-                    <h4>To pass with a minimum grade of 75%, aim for the required grades below:</h4>
-                    <p><strong>Required Midterm Grade: {required_midterm:.2f}</strong></p>
-                    <p><strong>Required Final Grade: {required_final:.2f}</strong></p>
-                    <p>__________________________________________________________</p>
-                    <h3>Dean's Lister Status</h3>
-                    <h4>{"To qualify for the Dean's List (90% subject grade), achieve the following this semester:" if deans_list_possible else "Unfortunately, it's not possible for you to be a Dean's Lister."}</h4>
-                    <p><strong>Required Midterm Grade: {'N/A' if not deans_list_possible else deans_midterm:.2f}</strong></p>
-                    <p><strong>Required Final Grade: {'N/A' if not deans_list_possible else deans_final:.2f}</strong></p>
-                """
+                result_message = "<h2>Results</h2>"
+
+                # Check if the required midterm and final grades for passing are within range
+                if 0 <= required_midterm <= 100 and 0 <= required_final <= 100:
+                    result_message += f"""
+                        <p><strong>Prelim Grade: {prelim}</strong></p>
+                        <p>____________________________________________________________</p>
+                        <br>
+                        <h3>You have a chance to pass!</h3>
+                        <h4>To pass with a minimum grade of 75%, aim for the required grades below:</h4>
+                        <br>
+                        <p><strong>Required Midterm Grade: {required_midterm:.2f}</strong></p>
+                        <p><strong>Required Final Grade: {required_final:.2f}</strong></p>
+                        <p>____________________________________________________________</p>
+                        <br>
+                    """
+                else:
+                    result_message += "<p>It is difficult to pass.</p>"
+
+                # Check if the required grades for the Dean's List are achievable
+                if deans_midterm > 100 or deans_final > 100:
+                    result_message += f"""
+                        <h3>Dean's Lister Status</h3>
+                        <h4>Unfortunately, you cannot achieve Dean's Lister status with your current grade.</h4>
+                    """    
+                else:
+                    # Construct Dean's List result message
+                    result_message += f"""
+                        <h3>Dean's Lister Status</h3>
+                        <h4>To qualify for the Dean's List (90% subject grade), achieve the following this semester:</h4>
+                        <br>
+                        <p><strong>Required Midterm Grade: {deans_midterm:.2f}</strong></p>
+                        <p><strong>Required Final Grade: {deans_final:.2f}</strong></p>
+                    """
                 
                 # Return the result as an HTML string
                 return result_message
 
+        
             # Expose the perform_calculations function to JavaScript for use in the browser
             window.perform_calculations = perform_calculations
         </py-script>
-
+                      
+        
         <script>
             // JavaScript function to handle the form submission
             async function handleSubmit(event) {
@@ -103,6 +125,9 @@
 
                 // Clear the input field after the form is submitted
                 document.getElementById("prelim").value = "";
+
+                // Scroll to the result-message div
+               document.getElementById("result-message").scrollIntoView({ behavior: "smooth" });
             }
         </script>
     </div>
